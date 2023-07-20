@@ -48,6 +48,7 @@
 
 uint32		bootstrap_data_checksum_version = 0;	/* No checksum */
 int			bootstrap_database_mode = DB_ORACLE;
+extern uint64 predefined_sysidentifier;
 
 static void CheckerModeMain(void);
 static void bootstrap_signals(void);
@@ -231,6 +232,16 @@ BootstrapModeMain(int argc, char *argv[], bool check_only)
 				SetConfigOption("shared_buffers", optarg, PGC_POSTMASTER, PGC_S_ARGV);
 				break;
 			case 'C':
+			case 's':
+			{
+				char* endptr;
+#ifdef HAVE_STRTOULL
+				predefined_sysidentifier = strtoull(optarg, &endptr, 10);
+#else
+				predefined_sysidentifier = strtoul(optarg, &endptr, 10);
+#endif
+				break;
+			}
 			case 'c':
 			case '-':
 				{
